@@ -1,38 +1,23 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+
 const app = express();
 
 const hostname = '0.0.0.0';
 const port = 3000;
 
-// Page d'accueil
-app.get('/', (req, res) => {
-  res.type('html');
-  res.status(200);
-  res.end("Home page");
-});
+// Connexion BDD
+// protocole://service/nom_bdd
+mongoose.connect('mongodb://mongo/apinodeipssi');
 
-// Liste tout les articles
-app.get('/posts', (req, res) => {
-  res.type('html');
-  res.status(200);
-  res.end("Liste des articles");
-});
+app.use(bodyParser.urlencoded( {extended: true} ));
+app.use(bodyParser.json());
 
-// Crée un article
-app.post('/posts', (req, res) => {
-  res.type('html');
-  res.status(201); // Created
-  res.end("Article crée");
-});
-
-// Affiche un seul article
-app.get('/posts/:post_id', (req, res) => {
-  console.log(req);
-  res.type('html');
-  res.status(200);
-  // res.end("Voici l'article : " + req.params.post_id);
-  res.end(`Voici l'article ${req.params.post_id}`);
-});
+// Importe la fonction anonyme dans la constante
+const postRoute = require('./api/routes/postRoute');
+// Utilise la fonction anonyme contenu dans la constante
+postRoute(app);
 
 
 app.listen(port, hostname);
