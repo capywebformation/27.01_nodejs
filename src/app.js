@@ -16,8 +16,10 @@ app.use(bodyParser.json());
 
 // Importe la fonction anonyme dans la constante
 const postRoute = require('./api/routes/postRoute');
+const commentRoute = require('./api/routes/commentRoute');
 // Utilise la fonction anonyme contenu dans la constante
 postRoute(app);
+commentRoute(app);
 
 
 app.listen(port, hostname);

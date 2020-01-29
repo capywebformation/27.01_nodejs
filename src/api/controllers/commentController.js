@@ -1,9 +1,10 @@
-// src/api/controllers/postController.js
+// src/api/controllers/commentController.js
 const mongoose = require('mongoose');
-const Post = require('../models/postModel');
+const Comment = require('../models/commentModel');
 
-exports.list_all_posts = (req, res) => {
-  Post.find({}, (error, posts) => {
+// /posts/:post_id/comments
+exports.list_all_comments_from_a_post = (req, res) => {
+  Comment.find({post_id: req.params.post_id}, (error, comments) => {
     if(error){
       res.status(500);
       console.log(error);
@@ -11,16 +12,34 @@ exports.list_all_posts = (req, res) => {
     }
     else{
       res.status(200);
-      res.json(posts);
+      res.json(comments);
     }
   })
 }
 
-exports.create_a_post = (req, res) => {
-  let new_post = new Post(req.body);
+// req.params.post_id = 12345
+
+// req.body = {
+//   name: "toto",
+//   message: "bonjour"
+// }
+exports.create_a_comment = (req, res) => {
+  let new_comment = new Comment(req.body);
+  // new_comment = {
+  //   __id: "sdjoisdjfiosdf",
+  //   name: "toto",
+  //   message: "bonjour"
+  // }
+  new_comment.post_id = req.params.post_id;
+  // new_comment = {
+  //   __id: "sdjoisdjfiosdf",
+  //   name: "toto",
+  //   message: "bonjour",
+  //   post_id: "12345"
+  // }
 
   try {
-    new_post.save((error, post) => {
+    new_comment.save((error, comment) => {
       if(error){
         res.status(400);
         console.log(error);
@@ -28,7 +47,7 @@ exports.create_a_post = (req, res) => {
       }
       else{
         res.status(201);
-        res.json(post)
+        res.json(comment)
       }
     })
   } catch (e) {
@@ -38,9 +57,9 @@ exports.create_a_post = (req, res) => {
   }
 }
 
-exports.get_a_post = (req, res) => {
+exports.get_a_comment = (req, res) => {
   try {
-    Post.findById(req.params.post_id, (error, post) => {
+    Comment.findById(req.params.comment_id, (error, comment) => {
       if(error){
         res.status(400);
         console.log(error);
@@ -48,7 +67,7 @@ exports.get_a_post = (req, res) => {
       }
       else{
         res.status(200);
-        res.json(post)
+        res.json(comment)
       }
     })
   } catch (e) {
@@ -58,9 +77,9 @@ exports.get_a_post = (req, res) => {
   }
 }
 
-exports.update_a_post = (req, res) => {
+exports.update_a_comment = (req, res) => {
   try {
-    Post.findByIdAndUpdate(req.params.post_id, req.body, {new:true}, (error, post) => {
+    Comment.findByIdAndUpdate(req.params.comment_id, req.body, {new:true}, (error, comment) => {
       if(error){
         res.status(400);
         console.log(error);
@@ -68,7 +87,7 @@ exports.update_a_post = (req, res) => {
       }
       else{
         res.status(200);
-        res.json(post)
+        res.json(comment)
       }
     })
   } catch (e) {
@@ -78,9 +97,9 @@ exports.update_a_post = (req, res) => {
   }
 }
 
-exports.delete_a_post = (req, res) => {
+exports.delete_a_comment = (req, res) => {
   try {
-    Post.findByIdAndRemove(req.params.post_id, (error) => {
+    Comment.findByIdAndRemove(req.params.comment_id, (error) => {
       if(error){
         res.status(400);
         console.log(error);
@@ -88,7 +107,7 @@ exports.delete_a_post = (req, res) => {
       }
       else{
         res.status(200);
-        res.json({message: "Article supprimé"})
+        res.json({message: "Commentaire supprimé"})
       }
     })
   } catch (e) {
