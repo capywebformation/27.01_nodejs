@@ -38,6 +38,8 @@ exports.create_a_comment = (req, res) => {
   //   post_id: "12345"
   // }
 
+// Il n'y a pas de vérification de si l'article existe
+
   try {
     new_comment.save((error, comment) => {
       if(error){
