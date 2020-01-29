@@ -1,6 +1,8 @@
 // src/api/controllers/postController.js
 const mongoose = require('mongoose');
+const fetch = require('node-fetch');
 const Post = require('../models/postModel');
+const textApiProvider = require('../providers/textApiProvider');
 
 exports.list_all_posts = (req, res) => {
   Post.find({}, (error, posts) => {
@@ -18,24 +20,41 @@ exports.list_all_posts = (req, res) => {
 
 exports.create_a_post = (req, res) => {
   let new_post = new Post(req.body);
+  // fetch("https://www.randomtext.me/api/lorem")
+  // .then(result => {
+  //   return result.json();
+  // })
+  // .then(result => {
+  //   console.log(result);
+  // })
 
-  try {
-    new_post.save((error, post) => {
-      if(error){
-        res.status(400);
-        console.log(error);
-        res.json({message: "Il manque des infos"});
-      }
-      else{
-        res.status(201);
-        res.json(post)
-      }
-    })
-  } catch (e) {
-    res.status(500);
-    console.log(e);
-    res.json({message: "Erreur serveur"})
-  }
+  const randomTextPromise = textApiProvider.getRandomText();
+
+  randomTextPromise.then(result => {
+    if(!new_post.content){
+      new_post.content = result;
+    }
+  })
+  .then(result => {
+    try {
+      new_post.save((error, post) => {
+        if(error){
+          res.status(400);
+          console.log(error);
+          res.json({message: "Il manque des infos"});
+        }
+        else{
+          res.status(201);
+          res.json(post)
+        }
+      })
+    } catch (e) {
+      res.status(500);
+      console.log(e);
+      res.json({message: "Erreur serveur"})
+    }
+  })
+
 }
 
 exports.get_a_post = (req, res) => {
